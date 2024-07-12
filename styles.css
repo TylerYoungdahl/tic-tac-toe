@@ -1,0 +1,103 @@
+body {
+  font-family: "Roboto", sans-serif;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-names-container {
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em;
+  border: 5px solid blue;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.player-names-container h1 {
+  text-align: center;
+}
+
+.inputs {
+  margin-bottom: 1em;
+}
+
+#player1,
+#player2 {
+  font-size: 24px;
+  padding: 0.2em;
+}
+
+.btn {
+  font-size: 24px;
+  font-weight: bold;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 4px;
+  outline: 2px blue solid;
+}
+
+.btn:hover {
+  cursor: pointer;
+  outline-offset: -2px;
+}
+
+.announcer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 604.8px;
+}
+
+.announcer {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.board-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background-color: rgb(211, 211, 211);
+}
+
+.board-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+  font-size: 15em;
+  border: 1px solid black;
+  user-select: none;
+}
+
+.board-cell:hover {
+  background-color: aquamarine;
+}
+
+.x-tile {
+  color: red;
+  pointer-events: none;
+  background-color: rgb(255, 159, 159);
+}
+
+.o-tile {
+  color: blue;
+  pointer-events: none;
+  background-color: rgb(132, 151, 255);
+}
+
+#reset-game {
+  visibility: hidden;
+}

@@ -24,6 +24,7 @@ function Gameboard() {
   const checkWinner = () => {
     const allCells = [];
 
+    // horizontal wins
     for (let i = 0; i < rows; i++) {
       if (
         board[i][0].getValue() !== " " &&
@@ -34,6 +35,7 @@ function Gameboard() {
       }
     }
 
+    // vertical wins
     for (let i = 0; i < columns; i++) {
       if (
         board[0][i].getValue() !== " " &&
@@ -44,6 +46,7 @@ function Gameboard() {
       }
     }
 
+    // diagonal wins
     if (
       board[0][0].getValue() !== " " &&
       board[0][0].getValue() === board[1][1].getValue() &&
@@ -60,6 +63,7 @@ function Gameboard() {
       return board[0][2].getValue();
     }
 
+    // tie
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
         allCells.push(board[i][j].getValue());
@@ -94,11 +98,43 @@ function Cell() {
 }
 
 function GameController() {
+  const announcer = document.querySelector(".announcer");
+  const boardContainer = document.querySelector(".board-container");
+  const resetBtn = document.querySelector("#reset-game");
+  const playerNamesContainer = document.querySelector(
+    ".player-names-container"
+  );
   const board = Gameboard();
 
+  const resetUI = () => {
+    boardContainer.innerHTML = "";
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        const tile = document.createElement("div");
+        tile.classList.add("board-cell");
+        if (board.getBoard()[i][j].getValue() === "X") {
+          tile.classList.add("x-tile");
+        } else if (board.getBoard()[i][j].getValue() === "O") {
+          tile.classList.add("o-tile");
+        }
+        tile.textContent = `${board.getBoard()[i][j].getValue()}`;
+        tile.dataset.row = `${i}`;
+        tile.dataset.col = `${j}`;
+
+        boardContainer.appendChild(tile);
+
+        tile.addEventListener("click", (event) => {
+          playRound(parseInt(tile.dataset.row), parseInt(tile.dataset.col));
+        });
+      }
+    }
+  };
+
+  // players
   const players = [
-    { player: 1, marker: "X" },
-    { player: 2, marker: "O" },
+    { player: 1, name: "", marker: "X" },
+    { player: 2, name: "", marker: "O" },
   ];
 
   let activePlayer = players[0];
@@ -109,12 +145,48 @@ function GameController() {
 
   const getActivePlayer = () => activePlayer;
 
-  board.printBoard();
-  console.log(`Player ${activePlayer.player}'s turn.`);
+  // return to start screen
+  const resetGame = () => {
+    playerNamesContainer.style.visibility = "visible";
+    playerNamesContainer.innerHTML = `<h1>Enter Player Names:</h1>
+          <div class="inputs">
+            <input
+              type="text"
+              name="player1"
+              id="player1"
+              placeholder="Player 1"
+            />
+            <input
+              type="text"
+              name="player2"
+              id="player2"
+              placeholder="Player 2"
+            />
+          </div>
+          <button class="btn" id="start-btn">Start</button>`;
+    const startBtn = document.querySelector("#start-btn");
+    startBtn.addEventListener("click", startGame);
+    resetBtn.style.visibility = "hidden";
+    boardContainer.innerHTML = "";
+    announcer.textContent = "";
+  };
+
+  // start game
+  const startGame = () => {
+    const player1Input = document.querySelector("#player1");
+    const player2Input = document.querySelector("#player2");
+    players[0].name = player1Input.value || "Player 1";
+    players[1].name = player2Input.value || "Player 2";
+    playerNamesContainer.style.visibility = "hidden";
+    playerNamesContainer.innerHTML = "";
+    resetUI();
+    printNewRound();
+  };
 
   const printNewRound = () => {
     board.printBoard();
-    console.log(`Player ${activePlayer.player}'s turn.`);
+    console.log(`${activePlayer.name}'s turn.`);
+    announcer.textContent = `${activePlayer.name}'s turn.`;
   };
 
   const playRound = (row, column) => {
@@ -124,19 +196,41 @@ function GameController() {
     if (winner === "tie") {
       board.printBoard();
       console.log(`It's a tie!`);
+      announcer.textContent = `It's a tie!`;
+      resetUI();
+      resetBtn.style.visibility = "visible";
     } else if (!winner) {
       switchPlayerTurn();
+      resetUI();
       printNewRound();
     } else {
       board.printBoard();
+      resetUI();
       console.log(
         `Player ${
-          winner === players[0].marker ? players[0].player : players[1].player
+          winner === players[0].marker ? players[0].name : players[1].name
         } wins!`
       );
+      announcer.textContent = `${
+        winner === players[0].marker ? players[0].name : players[1].name
+      } wins!`;
+      resetBtn.style.visibility = "visible";
     }
   };
-  return { switchPlayerTurn, getActivePlayer, printNewRound, playRound };
+
+  resetGame();
+
+  resetBtn.addEventListener("click", resetGame);
+
+  return {
+    resetUI,
+    switchPlayerTurn,
+    getActivePlayer,
+    printNewRound,
+    playRound,
+    startGame,
+    resetGame,
+  };
 }
 
 const game = GameController();
