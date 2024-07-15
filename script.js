@@ -21,6 +21,14 @@ function Gameboard() {
     }
   };
 
+  const resetBoard = () => {
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 3; j++) {
+        board[i][j].updateCell(" ");
+      }
+    }
+  };
+
   const checkWinner = () => {
     const allCells = [];
 
@@ -84,7 +92,7 @@ function Gameboard() {
     console.log(boardWithCellValues);
   };
 
-  return { getBoard, placeMarker, checkWinner, printBoard };
+  return { getBoard, placeMarker, resetBoard, checkWinner, printBoard };
 }
 
 function Cell() {
@@ -104,15 +112,18 @@ function GameController() {
   const playerNamesContainer = document.querySelector(
     ".player-names-container"
   );
+  let isNewGame = true;
   const board = Gameboard();
 
   const resetUI = () => {
     boardContainer.innerHTML = "";
+    let delayIncrement = 0.05;
 
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
         const tile = document.createElement("div");
         tile.classList.add("board-cell");
+        tile.classList.add("grow");
         if (board.getBoard()[i][j].getValue() === "X") {
           tile.classList.add("x-tile");
         } else if (board.getBoard()[i][j].getValue() === "O") {
@@ -122,9 +133,16 @@ function GameController() {
         tile.dataset.row = `${i}`;
         tile.dataset.col = `${j}`;
 
+        if (isNewGame) {
+          tile.style.animationName = "fade-in";
+          let animationDelay = (i * 3 + j) * delayIncrement;
+          tile.style.animationDelay = `${animationDelay}s`;
+        }
+
         boardContainer.appendChild(tile);
 
         tile.addEventListener("click", (event) => {
+          isNewGame = false;
           playRound(parseInt(tile.dataset.row), parseInt(tile.dataset.col));
         });
       }
@@ -163,9 +181,11 @@ function GameController() {
               placeholder="Player 2"
             />
           </div>
-          <button class="btn" id="start-btn">Start</button>`;
+          <button class="btn grow" id="start-btn">Start</button>`;
     const startBtn = document.querySelector("#start-btn");
-    startBtn.addEventListener("click", startGame);
+    startBtn.addEventListener("click", () => {
+      startGame();
+    });
     resetBtn.style.visibility = "hidden";
     boardContainer.innerHTML = "";
     announcer.textContent = "";
@@ -173,6 +193,7 @@ function GameController() {
 
   // start game
   const startGame = () => {
+    isNewGame = true;
     const player1Input = document.querySelector("#player1");
     const player2Input = document.querySelector("#player2");
     players[0].name = player1Input.value || "Player 1";
@@ -220,7 +241,10 @@ function GameController() {
 
   resetGame();
 
-  resetBtn.addEventListener("click", resetGame);
+  resetBtn.addEventListener("click", () => {
+    resetGame();
+    board.resetBoard();
+  });
 
   return {
     resetUI,

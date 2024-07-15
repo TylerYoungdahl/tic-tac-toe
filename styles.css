@@ -39,12 +39,11 @@ body {
   padding: 0.5em 1em;
   border: none;
   border-radius: 4px;
-  outline: 2px blue solid;
+  border: 3px blue solid;
 }
 
 .btn:hover {
   cursor: pointer;
-  outline-offset: -2px;
 }
 
 .announcer-container {
@@ -66,9 +65,9 @@ body {
 
 .board-container {
   display: grid;
+  gap: 5px;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  background-color: rgb(211, 211, 211);
 }
 
 .board-cell {
@@ -78,12 +77,37 @@ body {
   width: 200px;
   height: 200px;
   font-size: 15em;
-  border: 1px solid black;
+  border: 3px solid rgb(102, 102, 102);
+  border-radius: 3px;
+  background-color: rgb(211, 211, 211);
   user-select: none;
+  /* animation-name: fade-in; */
+  animation-duration: 1s;
+}
+
+/* ANIMATIONS */
+@keyframes fade-in {
+  from {
+    transform: translateY(50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+.grow {
+  transition: all 0.2s ease-in-out;
+}
+
+.grow:hover {
+  transform: scale(1.1);
 }
 
 .board-cell:hover {
   background-color: aquamarine;
+  cursor: pointer;
 }
 
 .x-tile {
